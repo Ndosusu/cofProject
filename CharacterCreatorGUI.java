@@ -22,6 +22,7 @@ public class CharacterCreatorGUI {
         JTextField nameField = new JTextField();
         JComboBox<String> profileBox = new JComboBox<>(new String[]{"MAGE", "GUERRIER", "RODEUR"});
         JComboBox<String> weaponBox = new JComboBox<>(new String[]{"EPEE", "ARC", "BATON"});
+        JComboBox<Peuple> peupleBox = new JComboBox<>(Peuple.values());
 
         JTextField agiField = new JTextField();
         JTextField conField = new JTextField();
@@ -35,6 +36,8 @@ public class CharacterCreatorGUI {
         centerPanel.add(nameField);
         centerPanel.add(new JLabel("Profil:"));
         centerPanel.add(profileBox);
+        centerPanel.add(new JLabel("Peuple:"));
+        centerPanel.add(peupleBox);
         centerPanel.add(new JLabel("Agilité:"));
         centerPanel.add(agiField);
         centerPanel.add(new JLabel("Constitution:"));
@@ -76,6 +79,7 @@ public class CharacterCreatorGUI {
                 try {
                     String name = nameField.getText();
                     String profile = (String) profileBox.getSelectedItem();
+                    Peuple peuple = (Peuple) peupleBox.getSelectedItem();
                     String weapon = (String) weaponBox.getSelectedItem();
 
                     int agi = Integer.parseInt(agiField.getText());
@@ -86,14 +90,24 @@ public class CharacterCreatorGUI {
                     int intel = Integer.parseInt(intelField.getText());
                     int vol = Integer.parseInt(volField.getText());
 
-                    int[] stats = {agi, con, force, per, cha, intel, vol};
-                    Arrays.sort(stats);
+                    // Valider les statistiques de base avant d'appliquer les bonus/malus
+                    int[] baseStats = {agi, con, force, per, cha, intel, vol};
+                    Arrays.sort(baseStats);
                     int[] validStats = {-1, 0, 0, 1, 1, 2, 3};
 
-                    if (!Arrays.equals(stats, validStats)) {
+                    if (!Arrays.equals(baseStats, validStats)) {
                         JOptionPane.showMessageDialog(frame, "Erreur : Les valeurs doivent être +3, +2, +1, +1, +0, +0, -1", "Erreur", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
+
+                    // Appliquer les bonus/malus du peuple après validation
+                    agi += peuple.getAgiBONUS();
+                    con += peuple.getConBONUS();
+                    force += peuple.getForBONUS();
+                    per += peuple.getPerBONUS();
+                    cha += peuple.getChaBONUS();
+                    intel += peuple.getIntelBONUS();
+                    vol += peuple.getVolBONUS();
 
                     int ini = 10 + per;
                     int def = 10 + agi;
@@ -113,8 +127,8 @@ public class CharacterCreatorGUI {
                     }
 
                     String result = String.format(
-                            "Nom: %s\nProfil: %s\nSanté: %d\nDéfense: %d\nInitiative: %d\nArme: %s\nStats:\n  Agilité=%d\n  Constitution=%d\n  Force=%d\n  Perception=%d\n  Charisme=%d\n  Intelligence=%d\n  Volonté=%d",
-                            name, profile, health, def, ini, weapon, agi, con, force, per, cha, intel, vol);
+                            "Nom: %s\nProfil: %s\nPeuple: %s\nSanté: %d\nDéfense: %d\nInitiative: %d\nArme: %s\nStats:\n  Agilité=%d\n  Constitution=%d\n  Force=%d\n  Perception=%d\n  Charisme=%d\n  Intelligence=%d\n  Volonté=%d",
+                            name, profile, peuple, health, def, ini, weapon, agi, con, force, per, cha, intel, vol);
                     resultArea.setText(result);
 
                 } catch (NumberFormatException ex) {

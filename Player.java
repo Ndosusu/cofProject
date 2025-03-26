@@ -2,12 +2,14 @@ public final class Player extends Entity {
     private int xp;
     private String profile;
     private Weapon weapon;
+    private Peuple peuple;
 
-    public Player(String name, String profile, int xp, int level, int health, int def, int ini, int agi, int con, int force, int per, int cha, int intel, int vol, int attaqueContact,int attaqueDistance,int attaqueMagique, Weapon weapon) {
-        super(name, level, health, def, ini, agi, con, force, per, cha, intel, vol);
+    public Player(String name, String profile, int xp, int level, int health, int def, int ini, int agi, int con, int force, int per, int cha, int intel, int vol, int attaqueContact, int attaqueDistance, int attaqueMagique, Weapon weapon, Peuple peuple) {
+        super(name, level, health, def, ini, agi + peuple.getAgiBONUS(), con + peuple.getConBONUS(), force + peuple.getForBONUS(), per, cha, intel, vol + peuple.getVolBONUS());
         this.xp = xp;
         this.profile = profile;
         this.weapon = weapon;
+        this.peuple = peuple;
     }
 
     public int getAttaqueContact() {
@@ -50,6 +52,14 @@ public final class Player extends Entity {
         this.profile = profile;
     }
 
+    public Peuple getPeuple() {
+        return peuple;
+    }
+
+    public void setPeuple(Peuple peuple) {
+        this.peuple = peuple;
+    }
+
     @Override
     public String toString() {
         return "Player{" +
@@ -69,6 +79,7 @@ public final class Player extends Entity {
                 ", attaqueDistance=" + getAttaqueDistance() +
                 ", attaqueMagique=" + getAttaqueMagique() +
                 ", weapon=" + weapon +
+                ", peuple=" + peuple +
                 '}';
     }
 }
